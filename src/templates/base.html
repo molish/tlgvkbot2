@@ -7,48 +7,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Flask Auth Example</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </head>
 
-<body>
-    <section class="hero is-primary is-fullheight">
+<body style="background-color: #ffffff; position: absolute; left: 0; right: 0; top: 0; bottom: 0; height: inherit">
+        <nav class="navbar navbar-light sticky-top" style="background-color: #8511b4;">
+            <div class="container-fluid ">
+                <ul class="nav nav-pills position-absolute bottom-0 end-0">
+                    <li class="nav-item" >
+                        <a href="{{ url_for('main.index') }}" class="nav-link text-light">
+                            Главная
+                        </a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('main.profile') }}" class="nav-link text-light">
+                            Работа
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if not current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('auth.login') }}" class="nav-link text-light">
+                            Войти
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('auth.logout') }}" class="nav-link text-light">
+                            Выйти
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
 
-        <div class="hero-head">
-            <nav class="navbar">
-                <div class="container">
-
-                    <div id="navbarMenuHeroA" class="navbar-menu">
-                        <div class="navbar-end">
-                            <a href="{{ url_for('main.index') }}" class="navbar-item">
-                                Главная
-                            </a>
-                            {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('main.profile') }}" class="navbar-item">
-                                Работа
-                            </a>
-                            {% endif %}
-                            {% if not current_user.is_authenticated %}
-                            <a href="{{ url_for('auth.login') }}" class="navbar-item">
-                                Войти
-                            </a>
-                            {% endif %}
-                            {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('auth.logout') }}" class="navbar-item">
-                                Выйти
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
-
-        <div class="hero-body">
-            <div class="container has-text-centered">
+        <div class="container-fluid" style="height: 82%">
                {% block content %}
                {% endblock %}
-            </div>
         </div>
-    </section>
+
+        <footer class="page-footer font-small blue" style="background-color: #8511b4">
+
+          <!-- Copyright -->
+          <div class="footer-copyright text-center py-3">© 2022: Made with python, flask, flask-login, SQLAlchemy
+          </div>
+          <!-- Copyright -->
+
+        </footer>
 </body>
 
 </html>

@@ -14,7 +14,6 @@ class User(UserMixin, db.Model):
                    unique=True,
                    primary_key=True,
                    autoincrement=True)  # primary keys are required by SQLAlchemy
-    email = db.Column(db.String(100), unique=True)  #
     password = db.Column(db.String(100))  # пароль есть только у администраторов и модераторов
     name = db.Column(db.String(100))  # имя фамилия
     phone_number = db.Column(db.String(11), unique=True)  # номер телефона
@@ -32,8 +31,8 @@ class Group(db.Model):
                    primary_key=True,
                    autoincrement=True)  # primary keys are required by SQLAlchemy
     name = db.Column(db.String(100), unique=True)  # название группы
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))# идентификатор создателя или владельца
-    owner = db.relationship('User', backref='owner', lazy='dynamic', uselist=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # идентификатор создателя или владельца
+    owner = db.relationship('User', backref='owner', lazy='subquery')
 
 
 class Content(db.Model):
@@ -42,7 +41,7 @@ class Content(db.Model):
                    unique=True,
                    primary_key=True,
                    autoincrement=True)  # primary keys are required by SQLAlchemy
-    content = db.Column(db.String(10000))
+    message = db.Column(db.String(10000))
     date = db.Column(db.DateTime)
 
 
@@ -54,12 +53,12 @@ class Message(db.Model):
                    autoincrement=True)  # primary keys are required by SQLAlchemy
     is_group = db.Column(db.Boolean)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref='user', lazy='dynamic', uselist=False)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
-    group = db.relationship('Group', backref='group', lazy='dynamic', uselist=False)
     content_id = db.Column(db.Integer, db.ForeignKey('content.id'))
-    content = db.relationship('Content', backref='content', lazy='dynamic', uselist=False)
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='sender', lazy='subquery')
+    user = db.relationship('User', foreign_keys=[user_id], backref='user', lazy='subquery')
+    group = db.relationship('Group', backref='group', lazy='subquery')
+    content = db.relationship('Content', backref='content', lazy='subquery')
     tlg_received = db.Column(db.Boolean)
     vk_received = db.Column(db.Boolean)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    sender = db.relationship('User', backref='sender', lazy='dynamic', uselist=False)

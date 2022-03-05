@@ -1,9 +1,65 @@
 from flask_login import UserMixin
 from . import db
 
+users_groups_relations = db.Table('user_groups_relations',
+                                  db.Column('group_id', db.Integer, db.ForeignKey('group.id')),
+                                  db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+                                  extend_existing=True
+                                  )
+
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # primary keys are required by SQLAlchemy
-    email = db.Column(db.String(100), unique=True) #
-    password = db.Column(db.String(100)) #
-    name = db.Column(db.String(100)) #
+    id = db.Column(db.Integer,
+                   nullable=False,
+                   unique=True,
+                   primary_key=True,
+                   autoincrement=True)  # primary keys are required by SQLAlchemy
+    email = db.Column(db.String(100), unique=True)  #
+    password = db.Column(db.String(100))  # пароль есть только у администраторов и модераторов
+    name = db.Column(db.String(100))  # имя фамилия
+    phone_number = db.Column(db.String(11), unique=True)  # номер телефона
+    vk_authorized = db.Column(db.Boolean)  # авторизован вк или нет
+    tlg_authorized = db.Column(db.Boolean)  # авторизован в телеграм или нет
+    status = db.Column(db.String(30))  # статус пользователя(ожидает подтверждения\в архиве\подтвержден)
+    app_role = db.Column(db.String(20))  # роль в приложении(админ, модератор, пользователь)
+    organisation_role = db.Column(db.String(100))  # должность в организации
+
+
+class Group(db.Model):
+    id = db.Column(db.Integer,
+                   nullable=False,
+                   unique=True,
+                   primary_key=True,
+                   autoincrement=True)  # primary keys are required by SQLAlchemy
+    name = db.Column(db.String(100), unique=True)  # название группы
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))# идентификатор создателя или владельца
+    owner = db.relationship('User', backref='owner', lazy='dynamic', uselist=False)
+
+
+class Content(db.Model):
+    id = db.Column(db.Integer,
+                   nullable=False,
+                   unique=True,
+                   primary_key=True,
+                   autoincrement=True)  # primary keys are required by SQLAlchemy
+    content = db.Column(db.String(10000))
+    date = db.Column(db.DateTime)
+
+
+class Message(db.Model):
+    id = db.Column(db.Integer,
+                   nullable=False,
+                   unique=True,
+                   primary_key=True,
+                   autoincrement=True)  # primary keys are required by SQLAlchemy
+    is_group = db.Column(db.Boolean)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='user', lazy='dynamic', uselist=False)
+    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
+    group = db.relationship('Group', backref='group', lazy='dynamic', uselist=False)
+    content_id = db.Column(db.Integer, db.ForeignKey('content.id'))
+    content = db.relationship('Content', backref='content', lazy='dynamic', uselist=False)
+    tlg_received = db.Column(db.Boolean)
+    vk_received = db.Column(db.Boolean)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    sender = db.relationship('User', backref='sender', lazy='dynamic', uselist=False)

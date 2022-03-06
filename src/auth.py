@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from .constants import ADMIN, MODERATOR
 from . import db
 from .models import User
 
@@ -31,6 +31,10 @@ def login_post():
     if not user or not check_password_hash(user.password, password):
         flash('Неверный логин или пароль. Пожалуйста попробуйте снова.')
         return redirect(url_for('auth.login'))  # if the user doesn't exist or password is wrong, reload the page
+
+    if user.app_role != ADMIN and user.app_role != MODERATOR:
+        flash('Только администраторы и модераоры могут входить на сайт')
+        return redirect(url_for('auth.login'))
 
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember)

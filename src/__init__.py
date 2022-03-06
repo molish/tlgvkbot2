@@ -3,6 +3,7 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
 # init SQLAlchemy so we can use it later in our models
+
 db = SQLAlchemy()
 
 
@@ -14,6 +15,8 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
+
+    app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

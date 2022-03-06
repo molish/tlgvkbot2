@@ -25,7 +25,6 @@ def workallgroups():
     users = User.query.all()
     relations = db.session.query(users_groups_relations).all()
     groups = Group.query.all()
-    users_with_groups = {}
     not_in_group = {}
     in_group = False
     for group in groups:

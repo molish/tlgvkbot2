@@ -1,11 +1,75 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="list-group">
-{%for user in users%}
-    <a href="#" class="list-group-item" aria-current="true">
-    {{ user['name'] }}
-  </a>
-  {%endfor%}
+<div class="btn-group" role="group" aria-label="Basic outlined example" style="margin-top: 5px">
+<a class="btn btn-outline-primary" href="#" role="button">Отобразить по группам</a>
+<a class="btn btn-outline-primary" href="#" role="button">Пригласить пользователя</a>
+<a class="btn btn-outline-primary" href="#" role="button">Создать группу</a>
 </div>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Имя Фамилия</th>
+      <th scope="col">Номер</th>
+      <th scope="col">Должность</th>
+        <th scope="col"></th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+    <tbody>
+        {%for user in users%}
+        <tr>
+          <th scope="row"><a class="text-decoration-none" style="color: black" href="#">
+              {{ user['name'] }}</a></th>
+          <td>{{ user['phone_number'] }}</td>
+          <td>{{ user['organisation_role'] }}</td>
+          <td>
+              {% if user['tlg_authorized'] %}
+                  <img src="static/images/tg.png" alt="TG" class="img-rounded" style="height:30px; width:30px"/>
+              {% else %}
+                  <img src="static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+              {% endif %}
+              {% if user['vk_authorized'] %}
+                  <img src="static/images/vk.png" alt="VK" class="img-rounded" style="height:30px; width:30px"/>
+              {% else %}
+                  <img src="static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+              {% endif %}
+          </td>
+          <td>  <div class="dropdown">
+                  <a class="btn btn-info btn-sm dropdown-toggle"
+                     href="#" role="button" id="dropdownMenuLink"
+                     data-bs-toggle="dropdown"
+                     aria-expanded="false"
+                        style="background-color:blueviolet; color:white">
+                    Группы
+                  </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        {% for row in relations if user['id'] == row['user_id']%}
+                        {% for group in groups if group['id'] == row['group_id']%}
+                            <li><a class="dropdown-item" href="#">{{ group['name'] }}</a></li>
+                        {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+              {% if current_user.app_role == "administrator" %}
+                  <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                    Удалить
+                  </a>
+              {% endif %}
+              {% if current_user.app_role == "moderator" %}
+                  <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                    Отправить в архив
+                </a>
+              {% endif %}
+                <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                    Сообщения
+                </a>
+                <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                    Отправить сообщение
+                </a>
+          </td>
+        </tr>
+          {%endfor%}
+    </tbody>
+</table>
 {% endblock %}

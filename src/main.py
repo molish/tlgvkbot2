@@ -1,8 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
-from . import db
-from . import models
-from .models import User
+from .models import *
 
 main = Blueprint('main', __name__)
 
@@ -14,6 +12,17 @@ def index():
 
 @main.route('/workallusers')
 @login_required
-def profile():
-    users = User.query.filter_by().all()
-    return render_template('workallusers.html', users=users)
+def workallusers():
+    users = User.query.all()
+    relations = db.session.query(users_groups_relations).all()
+    groups = Group.query.all()
+    return render_template('workallusers.html', users=users, groups=groups, relations=relations)
+
+
+@main.route('./workallusers')
+@login_required
+def workallgroups():
+    users = User.query.all()
+    relations = db.session.query(users_groups_relations).all()
+    groups = Group.query.all()
+    return render_template('workallgroups.html', users=users, groups=groups, relations=relations)

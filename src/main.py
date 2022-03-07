@@ -6,12 +6,12 @@ from .models import *
 
 main = Blueprint('main', __name__)
 
-
+#главная страница
 @main.route('/')
 def index():
     return render_template('index.html')
 
-
+#отображение всех пользователей
 @main.route('/workallusers')
 @login_required
 def workallusers():
@@ -20,7 +20,7 @@ def workallusers():
     groups = Group.query.all()
     return render_template('workallusers.html', users=users, groups=groups, relations=relations)
 
-
+#отображение пользователей по группам
 @main.route('/workallgroups')
 @login_required
 def workallgroups():
@@ -29,13 +29,13 @@ def workallgroups():
     groups = Group.query.all()
     return render_template('workallgroups.html', users=users, groups=groups, relations=relations)
 
-
+#окно создания группы
 @main.route('/creategroup')
 @login_required
 def creategroup():
     return render_template('creategroup.html')
 
-
+#метод добавления группы в бд
 @main.route('/creategroup', methods=['POST'])
 @login_required
 def creategroup_post():
@@ -49,7 +49,7 @@ def creategroup_post():
         db.session.commit()
     return redirect(url_for('main.workallgroups'))
 
-
+#окно редактирования и просмотра группы с пользователями
 @main.route('/<int:id>/editgroup')
 @login_required
 def editgroup(id):
@@ -63,7 +63,7 @@ def editgroup(id):
     not_in_group = User.query.filter(User.id.not_in(group_users)).all()
     return render_template('editgroup.html', group=group, owner=owner, users=users, not_in_group=not_in_group)
 
-
+#мето добавления изменений в группу в бд
 @main.route('/<int:id>/editgroup', methods=['POST'])
 @login_required
 def editgroup_post(id):
@@ -75,11 +75,12 @@ def editgroup_post(id):
         db.session.commit()
     return redirect(url_for('main.editgroup', id=id))
 
-
+#метод удаления группы из бд
 @main.route('/<int:id>/deletegroup')
 @login_required
 def deletegroup(id):
     Group.query.filter_by(id=id).delete()
+    db.session.query(users_groups_relations).filter_by(group_id=id).delete()
     db.session.commit()
     flash('Группа удалена')
     return redirect(url_for('main.workallgroups'))

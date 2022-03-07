@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Группа: {{ group.name }}</h1>
+    <form method="post">
+        <div class="form-group" style="margin-top: 20px">
+            <label for="title">Название</label>
+            <input type="text" name="new_group_name"
+                   placeholder="Впишите сюда новое название группы если хотите его изменить" class="form-control"
+                   value="{{ request.form['new_group_name'] }}"></input>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px">
+            <label for="content">Владелец : {{ owner.name }}</label>
+        </div>
+        <div class="form-group" style="margin-top: 20px">
+            <button type="submit" class="btn btn-outline-primary">Изменить название</button>
+        </div>
+    </form>
+
+    <div class="btn-group" role="group" aria-label="Basic outlined example" style="margin-top: 5px; margin-right: 10px">
+        <a class="btn btn-outline-primary" href="{{url_for('main.deletegroup', __METHOD_OVERRIDE__='POST', id=group.id)}}" role="button">Удалить группу</a>
+        <a class="btn btn-outline-primary" href="#" role="button">Сообщения</a>
+        <a class="btn btn-outline-primary" href="#" role="button">Отправить рассылку</a>
+        <div class="dropdown">
+          <a class="btn btn-outline-primary btn-sm dropdown-toggle"
+             href="#" role="button" id="dropdownMenuLink"
+             data-bs-toggle="dropdown"
+             aria-expanded="false">
+            Добавить пользователя
+          </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                {% for user in not_in_group%}
+                    <li><a class="dropdown-item" href="#">{{ user['name'] }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Имя Фамилия</th>
+          <th scope="col">Номер</th>
+          <th scope="col">Должность</th>
+            <th scope="col"></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+        <tbody>
+            {%for user in users%}
+            <tr>
+              <td scope="row"><a class="text-decoration-none" style="color: black" href="#">
+                  {{ user['name'] }}</a></td>
+              <td>{{ user['phone_number'] }}</td>
+              <td>{{ user['organisation_role'] }}</td>
+              <td>
+                  {% if user['tlg_authorized'] %}
+                      <img src="../static/images/tg.png" alt="TG" class="img-rounded" style="height:30px; width:30px"/>
+                  {% else %}
+                      <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                  {% endif %}
+                  {% if user['vk_authorized'] %}
+                      <img src="../static/images/vk.png" alt="VK" class="img-rounded" style="height:30px; width:30px"/>
+                  {% else %}
+                      <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                  {% endif %}
+              </td>
+              <td>
+                    <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                        Удалить из группы
+                    </a>
+                    <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                        Редактировать
+                    </a>
+                    <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                        Сообщения
+                    </a>
+                    <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                        Отправить сообщение
+                    </a>
+              </td>
+            </tr>
+              {%endfor%}
+        </tbody>
+    </table>
+
+{% endblock %}

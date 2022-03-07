@@ -4,11 +4,11 @@
 <div class="btn-group" role="group" aria-label="Basic outlined example" style="margin-top: 5px">
 <a class="btn btn-outline-primary" href="./workallusers" role="button">Отобразить всех пользователей</a>
 <a class="btn btn-outline-primary" href="#" role="button">Пригласить пользователя</a>
-<a class="btn btn-outline-primary" href="#" role="button">Создать группу</a>
+<a class="btn btn-outline-primary" href="{{url_for('main.creategroup')}}" role="button">Создать группу</a>
 </div>
 
     <div class="accordion" id="accordionPanelsStayOpenExample" style="margin-top: 10px">
-    {% for group in groups %}
+    {% for group in groups if current_user.app_role == 'administrator' or current_user.id == group['owner_id'] or group['id'] == 4%}
       <div class="accordion-item">
         <h2 class="accordion-header" id="panelsStayOpen-heading{{ group['id'] }}">
           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{ group['id'] }}" aria-expanded="true" aria-controls="panelsStayOpen-collapse{{ group['id'] }}">
@@ -18,24 +18,9 @@
         <div id="panelsStayOpen-collapse{{ group['id'] }}" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-heading{{ group['id'] }}">
           <div class="accordion-body">
                 <div class="btn-group" role="group" aria-label="Basic outlined example" style="margin-top: 5px; margin-right: 10px">
-                    <a class="btn btn-outline-primary" href="./workallusers" role="button">Редактировать группу</a>
-                    <a class="btn btn-outline-primary" href="#" role="button">Удалить группу</a>
+                    <a class="btn btn-outline-primary" href="{{ url_for('main.editgroup', id=group['id']) }}" role="button">Редактировать группу</a>
                     <a class="btn btn-outline-primary" href="#" role="button">Сообщения</a>
                     <a class="btn btn-outline-primary" href="#" role="button">Отправить рассылку</a>
-                    <div class="dropdown">
-                      <a class="btn btn-info btn-sm dropdown-toggle"
-                         href="#" role="button" id="dropdownMenuLink"
-                         data-bs-toggle="dropdown"
-                         aria-expanded="false"
-                            style="background-color:blueviolet; color:white">
-                        Добавить пользователя
-                      </a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            {% for user in not_in_group[group['id']]%}
-                                <li><a class="dropdown-item" href="#">{{ user['name'] }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
                 </div>
                 <table class="table table-hover">
                       <thead>
@@ -50,43 +35,33 @@
                     <tbody>
                         {% for row in relations if group['id'] == row['group_id']%}
                             {%for user in users if user['id'] == row['user_id']%}
-                                <tr>
+                                <tr id="group{{ group['id'] }}user{{ user['id'] }}">
                                   <td scope="row"><a class="text-decoration-none" style="color: black" href="#">
                                       {{ user['name'] }}</a></td>
                                   <td>{{ user['phone_number'] }}</td>
                                   <td>{{ user['organisation_role'] }}</td>
                                   <td>
                                       {% if user['tlg_authorized'] %}
-                                          <img src="static/images/tg.png" alt="TG" class="img-rounded" style="height:30px; width:30px"/>
+                                          <img src="../static/images/tg.png" alt="TG" class="img-rounded" style="height:30px; width:30px"/>
                                       {% else %}
-                                          <img src="static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                                          <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
                                       {% endif %}
                                       {% if user['vk_authorized'] %}
-                                          <img src="static/images/vk.png" alt="VK" class="img-rounded" style="height:30px; width:30px"/>
+                                          <img src="../static/images/vk.png" alt="VK" class="img-rounded" style="height:30px; width:30px"/>
                                       {% else %}
-                                          <img src="static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                                          <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
                                       {% endif %}
                                   </td>
                                   <td>
-                                        <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
-                                            Удалить из группы
+                                        <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white"  href="#">
+                                            Редактировать
                                         </a>
-                                          {% if current_user.app_role == "administrator" %}
-                                              <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
-                                                Удалить пользователя
-                                              </a>
-                                          {% endif %}
-                                          {% if current_user.app_role == "moderator" %}
-                                              <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
-                                                Отправить в архив
-                                                </a>
-                                          {% endif %}
-                                            <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
-                                                Сообщения
-                                            </a>
-                                            <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
-                                                Отправить сообщение
-                                            </a>
+                                        <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                                            Сообщения
+                                        </a>
+                                        <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                                            Отправить сообщение
+                                        </a>
                                   </td>
                                 </tr>
                               {%endfor%}

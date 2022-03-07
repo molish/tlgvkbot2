@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="static/css/preloader.css"/>
+    <link rel="stylesheet" href="../static/css/preloader.css"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Unlock"/>
 </head>
 
@@ -17,52 +17,59 @@
 
         <div class="loading">Загрузка</div>
 
-        <nav class="d-none page-header navbar navbar-light sticky-top" style="background-color: #8511b4;">
-            <div class="container-fluid ">
-                <ul class="nav nav-pills position-absolute bottom-0 end-0">
-                    <li class="nav-item" >
-                        <a href="{{ url_for('main.index') }}" class="nav-link text-light">
-                            Главная
-                        </a>
-                    </li>
-                    {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a href="{{ url_for('main.workallusers') }}" class="nav-link text-light">
-                            Работа
-                        </a>
-                    </li>
-                    {% endif %}
-                    {% if not current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a href="{{ url_for('auth.login') }}" class="nav-link text-light">
-                            Войти
-                        </a>
-                    </li>
-                    {% endif %}
-                    {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a href="{{ url_for('auth.logout') }}" class="nav-link text-light">
-                            Выйти
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
+            <nav class="d-none page-header navbar navbar-light sticky-top" style="background-color: #8511b4;">
+                <div class="container-fluid ">
+                    <ul class="nav nav-pills position-absolute bottom-0 end-0">
+                        <li class="nav-item" >
+                            <a href="{{ url_for('main.index') }}" class="nav-link text-light">
+                                Главная
+                            </a>
+                        </li>
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('main.workallusers') }}" class="nav-link text-light">
+                                Работа
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if not current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('auth.login') }}" class="nav-link text-light">
+                                Войти
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('auth.logout') }}" class="nav-link text-light">
+                                Выйти
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="container d-none">
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
             </div>
-        </nav>
 
-        <div class="d-none page-main container-fluid" style="height: 82%">
-               {% block content %}
-               {% endblock %}
-        </div>
 
-        <footer class="d-none page-footer font-small blue" style="background-color: #8511b4; margin-top: 100px">
+            <div class="d-none page-main container-fluid" style="height: 82%">
+                   {% block content %}
+                   {% endblock %}
+            </div>
 
-          <!-- Copyright -->
-          <div class="footer-copyright text-center py-3">© 2022: Made with python, flask, flask-login, SQLAlchemy
-          </div>
-          <!-- Copyright -->
+            <footer class="d-none page-footer font-small blue" style="background-color: #8511b4; margin-top: 100px">
 
-        </footer>
+              <!-- Copyright -->
+              <div class="footer-copyright text-center py-3">© 2022: Made with python, flask, flask-login, SQLAlchemy
+              </div>
+              <!-- Copyright -->
+
+            </footer>
 
 
         <script>
@@ -73,11 +80,8 @@
               document.querySelector('.page-header').classList.remove('d-none');
               document.querySelector('.page-main').classList.remove('d-none');
               document.querySelector('.page-footer').classList.remove('d-none');
+              document.querySelector('.container').classList.remove('d-none');
             });
         </script>
-
-
-
-</body>
-
+    </body>
 </html>

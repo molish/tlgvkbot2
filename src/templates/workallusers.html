@@ -4,7 +4,7 @@
 <div class="btn-group" role="group" aria-label="Basic outlined example" style="margin-top: 5px">
 <a class="btn btn-outline-primary" href="./workallgroups" role="button">Отобразить по группам</a>
 <a class="btn btn-outline-primary" href="#" role="button">Пригласить пользователя</a>
-<a class="btn btn-outline-primary" href="#" role="button">Создать группу</a>
+<a class="btn btn-outline-primary" href="{{url_for('main.creategroup')}}" role="button">Создать группу</a>
 </div>
 <table class="table table-hover">
   <thead>
@@ -25,14 +25,14 @@
           <td>{{ user['organisation_role'] }}</td>
           <td>
               {% if user['tlg_authorized'] %}
-                  <img src="static/images/tg.png" alt="TG" class="img-rounded" style="height:30px; width:30px"/>
+                  <img src="../static/images/tg.png" alt="TG" class="img-rounded" style="height:30px; width:30px"/>
               {% else %}
-                  <img src="static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                  <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
               {% endif %}
               {% if user['vk_authorized'] %}
-                  <img src="static/images/vk.png" alt="VK" class="img-rounded" style="height:30px; width:30px"/>
+                  <img src="../static/images/vk.png" alt="VK" class="img-rounded" style="height:30px; width:30px"/>
               {% else %}
-                  <img src="static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                  <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
               {% endif %}
           </td>
           <td>  <div class="dropdown">
@@ -51,16 +51,9 @@
                         {% endfor %}
                     </ul>
                 </div>
-              {% if current_user.app_role == "administrator" %}
-                  <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
-                    Удалить
-                  </a>
-              {% endif %}
-              {% if current_user.app_role == "moderator" %}
-                  <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
-                    Отправить в архив
+                <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                    Редактировать
                 </a>
-              {% endif %}
                 <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
                     Сообщения
                 </a>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Добавить нового пользователя</h1>
+    <form method="post">
+        <div class="form-group" style="margin-top: 20px">
+            <label for="title">Имя Фамилия</label>
+            <input type="text" name="user_name"
+                   placeholder="Имя и Фамилия нового пользователя" class="form-control"
+                   value="{{ request.form['user_name'] }}"></input>
+        </div>
+        <div class="form-group" style="margin-top: 20px">
+            <label for="title">Номер телефона</label>
+            <input type="text" name="phone_number"
+                   placeholder="Номер телефона нового пользователя в формате: 8**********" class="form-control"
+                   value="{{ request.form['phone_number'] }}"></input>
+        </div>
+        <div class="form-group" style="margin-top: 20px">
+            <label for="title">Должность</label>
+            <input type="text" name="org_role"
+                   placeholder="Должность нового пользователя" class="form-control"
+                   value="{{ request.form['org_role'] }}"></input>
+        </div>
+        {% if current_user.app_role == 'administrator'%}
+            <label for="title" style="margin-top: 20px">Роль в приложении: </label>
+            <div class="form-group" >
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="app_role" id="inlineRadio1" value="administrator">
+                  <label class="form-check-label" for="inlineRadio1">Администраток</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="app_role" id="inlineRadio2" value="moderator">
+                  <label class="form-check-label" for="inlineRadio2">Модератор</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="app_role" id="inlineRadio3" value="user" checked>
+                  <label class="form-check-label" for="inlineRadio3">Пользователь</label>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 20px">
+                <label for="title">Пароль:</label>
+                <input type="text" name="pass"
+                       placeholder="Пароль для нового пользователя" class="form-control"
+                       value="{{ request.form['pass'] }}"></input>
+            </div>
+        {% endif %}
+        <div class="form-group" style="margin-top: 20px">
+            <button type="submit" class="btn btn-primary">Добавить</button>
+        </div>
+    </form>
+
+{% endblock %}

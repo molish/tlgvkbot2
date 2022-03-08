@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from flask_login import UserMixin
+
 from . import db
 
 users_groups_relations = db.Table('user_groups_relations',
@@ -62,3 +65,4 @@ class Message(db.Model):
     content = db.relationship('Content', backref='content', lazy='subquery')
     tlg_received = db.Column(db.Boolean)
     vk_received = db.Column(db.Boolean)
+    date = db.Column(db.DateTime, default=datetime.now())

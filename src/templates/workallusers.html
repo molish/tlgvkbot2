@@ -3,8 +3,8 @@
 {% block content %}
 <div class="btn-group" role="group" aria-label="Basic outlined example" style="margin-top: 5px">
 <a class="btn btn-outline-primary" href="./workallgroups" role="button">Отобразить по группам</a>
-<a class="btn btn-outline-primary" href="#" role="button">Пригласить пользователя</a>
-<a class="btn btn-outline-primary" href="{{url_for('main.creategroup')}}" role="button">Создать группу</a>
+<a class="btn btn-outline-primary" href="{{url_for('users.createuser')}}" role="button">Пригласить пользователя</a>
+<a class="btn btn-outline-primary" href="{{url_for('groups.creategroup')}}" role="button">Создать группу</a>
 </div>
 <table class="table table-hover">
   <thead>
@@ -19,7 +19,9 @@
     <tbody>
         {%for user in users%}
         <tr>
-          <td scope="row"><a class="text-decoration-none" style="color: black" href="#">
+          <td scope="row">
+              <a class="text-decoration-none" style="color: black"
+                 href="{{ url_for('users.edituser', id=user['id']) }}">
               {{ user['name'] }}</a></td>
           <td>{{ user['phone_number'] }}</td>
           <td>{{ user['organisation_role'] }}</td>
@@ -46,14 +48,11 @@
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         {% for row in relations if user['id'] == row['user_id']%}
                         {% for group in groups if group['id'] == row['group_id']%}
-                            <li><a class="dropdown-item" href="#">{{ group['name'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('groups.editgroup', id=group['id']) }}">{{ group['name'] }}</a></li>
                         {% endfor %}
                         {% endfor %}
                     </ul>
                 </div>
-                <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
-                    Редактировать
-                </a>
                 <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
                     Сообщения
                 </a>

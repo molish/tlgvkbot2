@@ -19,7 +19,7 @@
     </form>
 
     <div class="btn-group" role="group" aria-label="Basic outlined example" style="margin-top: 5px; margin-right: 10px">
-        <a class="btn btn-outline-primary" href="{{url_for('main.deletegroup', __METHOD_OVERRIDE__='POST', id=group.id)}}" role="button">Удалить группу</a>
+        <a class="btn btn-outline-primary" href="{{url_for('groups.deletegroup', id=group.id)}}" role="button">Удалить группу</a>
         <a class="btn btn-outline-primary" href="#" role="button">Сообщения</a>
         <a class="btn btn-outline-primary" href="#" role="button">Отправить рассылку</a>
         <div class="dropdown">
@@ -31,7 +31,7 @@
           </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 {% for user in not_in_group%}
-                    <li><a class="dropdown-item" href="#">{{ user['name'] }}</a></li>
+                    <li><a class="dropdown-item" href="#">{{ user['name'] }} {{ user['phone_number'] }}</a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -50,7 +50,9 @@
         <tbody>
             {%for user in users%}
             <tr>
-              <td scope="row"><a class="text-decoration-none" style="color: black" href="#">
+              <td scope="row">
+                  <a class="text-decoration-none" style="color: black"
+                     href="{{ url_for('users.edituser', id=user['id']) }}">
                   {{ user['name'] }}</a></td>
               <td>{{ user['phone_number'] }}</td>
               <td>{{ user['organisation_role'] }}</td>

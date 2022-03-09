@@ -45,7 +45,6 @@ class Content(db.Model):
                    primary_key=True,
                    autoincrement=True)  # primary keys are required by SQLAlchemy
     message = db.Column(db.String(10000))
-    date = db.Column(db.DateTime)
 
 
 class Message(db.Model):
@@ -65,4 +64,4 @@ class Message(db.Model):
     content = db.relationship('Content', backref='content', lazy='subquery')
     tlg_received = db.Column(db.Boolean)
     vk_received = db.Column(db.Boolean)
-    date = db.Column(db.DateTime, default=datetime.now())
+    date = db.Column(db.TEXT, default=datetime.utcnow)

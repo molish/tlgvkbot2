@@ -57,7 +57,15 @@ def edituser(id):
     relations = db.session.query(users_groups_relations).filter_by(user_id=user.id).all()
     group_ids = []
     for row in relations:
-        group_ids.append(row.user_id)
+        group_ids.append(row.group_id)
     user_groups = Group.query.filter(Group.id.in_(group_ids)).order_by(db.desc(Group.id)).all()
     messages = Message.query.filter_by(user_id=user.id).all()
-    return render_template('edituser.html', user=user, user_groups=user_groups, user_messages=messages)
+    msg_content = {}
+    for message in messages:
+        message.date = datetime.strptime(message.date, '%Y-%m-%d %H:%M:%S')
+        db_msg = message.content.message
+        db_sender = message.sender.name
+        msg_content[f'message{message.id}'] = db_msg
+        msg_content[f'sender{message.sender_id}'] = db_sender
+    return render_template('edituser.html', user=user, user_groups=user_groups, user_messages=messages,
+                           messages_content=msg_content)

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Редактирование пользователя</h1>
+
+
+    <div class="container" style="margin-top: 20px">
+       <div class="row">
+           <form method="post" style="width: 40%">
+                <div class="form-group" style="margin-top: 20px">
+                    <label for="title">Имя Фамилия</label>
+                    <input type="text" name="user_name"
+                           placeholder="{{ user.name }}" class="form-control"
+                           value="{{ request.form['user_name'] }}"></input>
+                </div>
+                <div class="form-group" style="margin-top: 20px">
+                    <label for="title">Номер телефона</label>
+                    <input type="text" name="phone_number"
+                           placeholder="{{ user.phone_number }}" class="form-control"
+                           value="{{ request.form['phone_number'] }}"></input>
+                </div>
+                <div class="form-group" style="margin-top: 20px">
+                    <label for="title">Должность</label>
+                    <input type="text" name="org_role"
+                           placeholder="{{ user.organisation_role }}" class="form-control"
+                           value="{{ request.form['org_role'] }}"></input>
+                </div>
+                {% if current_user.app_role == 'administrator'%}
+                    {% if user.app_role == 'administrator'%}
+                    <label for="title" style="margin-top: 20px">Роль в приложении: </label>
+                    <div class="form-group" >
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="app_role" id="inlineRadio1" value="administrator" checked>
+                          <label class="form-check-label" for="inlineRadio1">Администратор</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="app_role" id="inlineRadio2" value="moderator">
+                          <label class="form-check-label" for="inlineRadio2">Модератор</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="app_role" id="inlineRadio3" value="user" >
+                          <label class="form-check-label" for="inlineRadio3">Пользователь</label>
+                        </div>
+                    {% endif %}
+                    {% if user.app_role == 'moderator'%}
+                    <label for="title" style="margin-top: 20px">Роль в приложении: </label>
+                    <div class="form-group" >
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="app_role" id="inlineRadio1" value="administrator">
+                          <label class="form-check-label" for="inlineRadio1">Администраток</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="app_role" id="inlineRadio2" value="moderator" checked>
+                          <label class="form-check-label" for="inlineRadio2">Модератор</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="app_role" id="inlineRadio3" value="user" >
+                          <label class="form-check-label" for="inlineRadio3">Пользователь</label>
+                        </div>
+                    {% endif %}
+                    {% if user.app_role == 'user'%}
+                    <label for="title" style="margin-top: 20px">Роль в приложении: </label>
+                    <div class="form-group" >
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="app_role" id="inlineRadio1" value="administrator" >
+                          <label class="form-check-label" for="inlineRadio1">Администраток</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="app_role" id="inlineRadio2" value="moderator">
+                          <label class="form-check-label" for="inlineRadio2">Модератор</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="app_role" id="inlineRadio3" value="user" checked>
+                          <label class="form-check-label" for="inlineRadio3">Пользователь</label>
+                        </div>
+                    {% endif %}
+                    </div>
+                    <div class="form-group" style="margin-top: 20px">
+                        <label for="title">Пароль:</label>
+                        <input type="text" name="pass"
+                               placeholder="Пароль для нового пользователя" class="form-control"
+                               value="{{ request.form['pass'] }}"></input>
+                    </div>
+                {% endif %}
+                <div class="form-group" style="margin-top: 20px">
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+       </div>
+      <div class="row" style="margin-top: 20px">
+        <div class="col-3">
+        <h3>Группы: </h3>
+          <table class="table table-hover">
+              <thead>
+              </thead>
+                <tbody>
+                {% for group in user_groups %}
+                    <tr>
+                      <td scope="row">
+                          <a class="text-decoration-none" style="color: black"
+                            href="{{ url_for('groups.editgroup', id=group['id']) }}">
+                          {{ group['name'] }}</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+        </div>
+        <div class="col-9">
+        <h3>Сообщения: </h3>
+              <div class="accordion" id="accordionPanelsStayOpenExample" style="margin-top: 10px">
+                {% for message in user_messages %}
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-heading{{ message['id'] }}">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{ message['id'] }}" aria-expanded="true" aria-controls="panelsStayOpen-collapse{{ message['id'] }}">
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-4">
+                              Дата: {{ message['date'] }}
+                            </div>
+                            <div class="col-3">
+                                {%  set senderid = 'sender' ~ message['sender_id'] %}
+                                Отправитель: {{ messages_content[senderid] }}
+                            </div>
+                            <div class="col-3">
+                              Статус получения:
+                            </div>
+                            <div class="col-1">
+                                        {% if message['tlg_received'] %}
+                                              <img src="../static/images/tg.png" alt="TG" class="img-rounded" style="height:30px; width:30px"/>
+                                          {% else %}
+                                              <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                                          {% endif %}
+                            </div>
+                            <div class="col-1">
+                                          {% if message['vk_received'] %}
+                                              <img src="../static/images/vk.png" alt="VK" class="img-rounded" style="height:30px; width:30px"/>
+                                          {% else %}
+                                              <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                                          {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapse{{ message['id'] }}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading{{ message['id'] }}">
+                      <div class="accordion-body">
+                            {%  set messageid = 'message' ~ message['id'] %}
+                            {{ messages_content[messageid] }}
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+                </div>
+        </div>
+      </div>
+    </div>
+
+
+{% endblock %}

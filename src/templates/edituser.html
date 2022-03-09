@@ -6,7 +6,7 @@
 
     <div class="container" style="margin-top: 20px">
        <div class="row">
-           <form method="post" style="width: 40%">
+           <form method="post" >
                 <div class="form-group" style="margin-top: 20px">
                     <label for="title">Имя Фамилия</label>
                     <input type="text" name="user_name"
@@ -63,7 +63,7 @@
                     <div class="form-group" >
                         <div class="form-check form-check-inline">
                           <input class="form-check-input" type="radio" name="app_role" id="inlineRadio1" value="administrator" >
-                          <label class="form-check-label" for="inlineRadio1">Администраток</label>
+                          <label class="form-check-label" for="inlineRadio1">Администратор</label>
                         </div>
                         <div class="form-check form-check-inline">
                           <input class="form-check-input" type="radio" name="app_role" id="inlineRadio2" value="moderator">
@@ -82,28 +82,97 @@
                                value="{{ request.form['pass'] }}"></input>
                     </div>
                 {% endif %}
+                {% if user['status'] == 'подтвержден' %}
                 <div class="form-group" style="margin-top: 20px">
-                    <button type="submit" class="btn btn-primary">Добавить</button>
+                    <label for="title">Статус: </label>
+                    <label for="title" style="color: green">Подтвержден </label>
+                </div>
+                {% endif %}
+                {% if user['status'] == 'ожидает подтверждения' %}
+                <div class="form-group" style="margin-top: 20px">
+                    <label for="title">Статус: </label>
+                    <label for="title" style="color: darkgreen">Ожидает подтверждения </label>
+                </div>
+                {% endif %}
+                {% if user['status'] == 'ожидает отправления в архив' %}
+                <div class="form-group" style="margin-top: 20px">
+                    <label for="title">Статус: </label>
+                    <label for="title" style="color: orange">Ожидает отправления в архив </label>
+                </div>
+                {% endif %}
+                {% if user['status'] == 'в архиве' %}
+                <div class="form-group" style="margin-top: 20px">
+                    <label for="title">Статус: </label>
+                    <label for="title" style="color: red">В архиве </label>
+                </div>
+                {% endif %}
+                {% if user['status'] == 'Ожидает восстановления' %}
+                <div class="form-group" style="margin-top: 20px">
+                    <label for="title">Статус: </label>
+                    <label for="title" style="color: darkgoldenrod">Ожидает восстановления </label>
+                </div>
+                {% endif %}
+                <div class="btn-group" role="group" aria-label="Basic outlined example" style="padding-top: 20px">
+                <button type="submit" class="btn btn-outline-primary">Изменить</button>
+                {% if current_user.app_role == 'administrator' %}
+                    {% if user['status'] == 'в архиве' %}
+                    <a class="btn btn-outline-primary" href="{{ url_for('users.deleteuser', id=user.id) }}" role="button" style="color: red">Удалить из бд</a>
+                    <a class="btn btn-outline-primary" href="{{ url_for('users.restoreuser', id=user.id) }}" role="button" style="color: limegreen">Восстановить</a>
+                    {% endif %}
+                    {% if user['status'] != 'в архиве' %}
+                    <a class="btn btn-outline-primary" href="{{ url_for('users.movetoarchive', id=user.id) }}" role="button" style="color: red">Переместить в архив</a>
+                    {% endif %}
+                {% endif %}
+                {% if current_user.app_role == 'moderator' %}
+                    {% if user['status'] != 'ожидает отправления в архив' and user['status'] != 'в архиве' %}
+                    <a class="btn btn-outline-primary" href="{{ url_for('users.movetoarchive', id=user.id) }}" role="button" style="color: red">В архив</a>
+                    {% endif %}
+                    {% if user['status'] == 'ожидает отправления в архив' or user['status'] == 'в архиве' %}
+                    <a class="btn btn-outline-primary" href="{{ url_for('users.restoreuser', id=user.id) }}" role="button" style="color: limegreen">Восстановить</a>
+                    {% endif %}
+                {% endif %}
                 </div>
             </form>
        </div>
       <div class="row" style="margin-top: 20px">
         <div class="col-3">
         <h3>Группы: </h3>
-          <table class="table table-hover">
-              <thead>
-              </thead>
-                <tbody>
-                {% for group in user_groups %}
-                    <tr>
-                      <td scope="row">
-                          <a class="text-decoration-none" style="color: black"
-                            href="{{ url_for('groups.editgroup', id=group['id']) }}">
-                          {{ group['name'] }}</a></td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-        </table>
+            <div class="row" style="margin-top: 20px">
+                <div class="col-sm">
+                  <table class="table table-hover">
+                      <thead>
+                        <th scope="col">Пользователь</th>
+                      </thead>
+                        <tbody>
+                        {% for group in user_groups %}
+                            <tr>
+                              <td scope="row" class="hover">
+                                  <a class="text-decoration-none" style="color: black"
+                                    href="{{ url_for('groups.editgroup', id=group['id']) }}">
+                                  {{ group['name'] }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                  </table>
+                </div>
+                <div class="col-sm">
+                  <table class="table table-hover">
+                      <thead>
+                        <th scope="col">Администратор</th>
+                      </thead>
+                        <tbody>
+                        {% for group in user_groups_admin %}
+                            <tr>
+                              <td scope="row" class="hover">
+                                  <a class="text-decoration-none" style="color: black"
+                                    href="{{ url_for('groups.editgroup', id=group['id']) }}">
+                                  {{ group['name'] }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                  </table>
+                </div>
+            </div>
         </div>
         <div class="col-9">
         <h3>Сообщения: </h3>
@@ -145,7 +214,7 @@
                     <div id="panelsStayOpen-collapse{{ message['id'] }}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading{{ message['id'] }}">
                       <div class="accordion-body">
                             {%  set messageid = 'message' ~ message['id'] %}
-                            {{ messages_content[messageid] }}
+                            <h4>Содержание:</h4>{{ messages_content[messageid] }}
                       </div>
                     </div>
                   </div>

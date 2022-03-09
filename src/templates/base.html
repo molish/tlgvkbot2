@@ -20,6 +20,14 @@
             <nav class="d-none page-header navbar navbar-light sticky-top" style="background-color: #8511b4;">
                 <div class="container-fluid ">
                     <ul class="nav nav-pills position-absolute bottom-0 end-0">
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link text-light" style="color: black"
+                                        href="{{ url_for('users.edituser', id=current_user.id) }}">
+                                Добро пожаловать: {{ current_user.name }}
+                            </a>
+                         </li>
+                        {% endif %}
                         <li class="nav-item" >
                             <a href="{{ url_for('main.index') }}" class="nav-link text-light">
                                 Главная

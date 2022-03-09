@@ -18,7 +18,7 @@ def index():
 @main.route('/workallusers')
 @login_required
 def workallusers():
-    users = User.query.order_by(User.name).all()
+    users = User.query.filter(User.status.in_([CONFIRMED, WAITING_ARCHIEVED])).order_by(User.name).all()
     relations = db.session.query(users_groups_relations).all()
     groups = Group.query.all()
     return render_template('workallusers.html', users=users, groups=groups, relations=relations)
@@ -32,7 +32,3 @@ def workallgroups():
     relations = db.session.query(users_groups_relations).all()
     groups = Group.query.order_by(db.desc(Group.id)).all()
     return render_template('workallgroups.html', users=users, groups=groups, relations=relations)
-
-
-
-

@@ -18,7 +18,11 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-
+    try:
+        x = threading.Thread(target=listen_tg_bot, daemon=True)
+        x.start()
+    except BaseException:
+        sys.exit()
 
     db.init_app(app)
 

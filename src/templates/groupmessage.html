@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Отправить рассылку в группу: <a class="text-decoration-none" href="{{ url_for('groups.editgroup', id=group.id) }}">{{ group.name }}</a></h2>
+    <form method="post">
+        <div class="form-group" style="margin-top: 20px">
+            <label for="title">Содежание сообщения:</label>
+            <textarea name="message_content" placeholder="Текст"
+                  class="form-control">{{ request.form['message_content'] }}</textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px">
+            <label for="content">Владелец : {{ owner.name }}</label>
+        </div>
+        <div class="form-group" style="margin-top: 20px">
+            <button type="submit" class="btn btn-outline-primary">Отправить</button>
+        </div>
+    </form>
+{% endblock %}

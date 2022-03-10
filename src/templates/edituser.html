@@ -114,6 +114,9 @@
                 {% endif %}
                 <div class="btn-group" role="group" aria-label="Basic outlined example" style="padding-top: 20px">
                 <button type="submit" class="btn btn-outline-primary">Изменить</button>
+                <a class="btn btn-outline-primary" href="{{ url_for('messages.usermessage', id=user.id) }}">
+                        Отправить сообщение
+                    </a>
                 {% if current_user.app_role == 'administrator' %}
                     {% if user['status'] == 'в архиве' %}
                     <a class="btn btn-outline-primary" href="{{ url_for('users.deleteuser', id=user.id) }}" role="button" style="color: red">Удалить из бд</a>
@@ -188,7 +191,7 @@
                             </div>
                             <div class="col-3">
                                 {%  set senderid = 'sender' ~ message['sender_id'] %}
-                                Отправитель: {{ messages_content[senderid] }}
+                                Отправитель: <a href="{{ url_for('users.edituser', id=message['sender_id']) }}">{{ messages_content[senderid] }}</a>
                             </div>
                             <div class="col-3">
                               Статус получения:
@@ -219,7 +222,7 @@
                     </div>
                   </div>
                 {% endfor %}
-                </div>
+              </div>
         </div>
       </div>
     </div>

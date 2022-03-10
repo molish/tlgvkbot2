@@ -39,6 +39,9 @@ def create_app():
     from .groups import groups as groups_blueprint
     app.register_blueprint(groups_blueprint)
 
+    from .messages import messages as messages_blueprint
+    app.register_blueprint(messages_blueprint)
+
     # blueprint for non-auth parts of app
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)

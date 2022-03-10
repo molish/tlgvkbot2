@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="accordion" id="accordionPanelsStayOpenExample" style="margin-top: 10px">
+    <h2>Сообщения группы: <a class="text-decoration-none" href="{{ url_for('groups.editgroup', id=group.id) }}">{{ group.name }}</a></h2>
+    {% if noMessages %}
+    <h1 style="margin-top: 20px">В группе нет сообщений</h1>
+    {% else %}
+        {% for message in user_messages %}
+          <div class="accordion-item" style="margin-top: 20px">
+            <h2 class="accordion-header" id="panelsStayOpen-heading{{ message['id'] }}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{ message['id'] }}" aria-expanded="true" aria-controls="panelsStayOpen-collapse{{ message['id'] }}">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-4">
+                      Дата: {{ message['date'] }}
+                    </div>
+                    <div class="col-3">
+                        {%  set senderid = 'sender' ~ message['sender_id'] %}
+                        Отправитель: <a href="{{ url_for('users.edituser', id=message['sender_id']) }}">{{ messages_content[senderid] }}</a>
+                    </div>
+                    <div class="col-3">
+                      Статус получения:
+                    </div>
+                    <div class="col-1">
+                                {% if message['tlg_received'] %}
+                                      <img src="../static/images/tg.png" alt="TG" class="img-rounded" style="height:30px; width:30px"/>
+                                  {% else %}
+                                      <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                                  {% endif %}
+                    </div>
+                    <div class="col-1">
+                                  {% if message['vk_received'] %}
+                                      <img src="../static/images/vk.png" alt="VK" class="img-rounded" style="height:30px; width:30px"/>
+                                  {% else %}
+                                      <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                                  {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapse{{ message['id'] }}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading{{ message['id'] }}">
+              <div class="accordion-body">
+                    {%  set messageid = 'message' ~ message['id'] %}
+                    <h4>Содержание:</h4>{{ messages_content[messageid] }}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

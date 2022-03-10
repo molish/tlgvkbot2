@@ -53,7 +53,7 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="{{ url_for('messages.usermessage', id=user['id']) }}">
                     Отправить сообщение
                 </a>
           </td>

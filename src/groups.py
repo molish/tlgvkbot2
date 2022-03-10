@@ -7,6 +7,7 @@ from .models import *
 
 groups = Blueprint('groups', __name__)
 
+
 # ВСЕ ЧТО СВЯЗАНО С ГРУППАМИ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # окно создания группы
 @groups.route('/creategroup')
@@ -44,7 +45,9 @@ def editgroup(id):
     for row in relations:
         group_users.append(row.user_id)
     users = User.query.filter(User.id.in_(group_users)).order_by(User.name).all()
-    not_in_group = User.query.filter(User.id.not_in(group_users)).order_by(User.name).all()
+    not_in_group = User.query.filter(User.id.not_in(group_users),
+                                     User.status.in_([WAITING_RESTORE, WAITING_CONFIRMENT, CONFIRMED])).order_by(
+        User.name).all()
     return render_template('editgroup.html', group=group, owner=owner, users=users, not_in_group=not_in_group)
 
 
@@ -74,3 +77,25 @@ def deletegroup(id):
     db.session.commit()
     flash('Группа удалена')
     return redirect(url_for('main.workallgroups'))
+
+
+@groups.route('/<int:user_id>-<int:group_id>/removeuser')
+@login_required
+def removeuser(user_id, group_id):
+    user = User.query.filter_by(id=user_id).first()
+    group = Group.query.filter_by(id=group_id).first()
+    rel = db.session.query(users_groups_relations).filter_by(group_id=group.id, user_id=user.id).first()
+    if rel:
+        flash(f'Пользователь удален {user_id} {group_id}')
+    return redirect(url_for('groups.editgroup', id=group.id))
+
+
+@groups.route('/<int:user_id>-<int:group_id>/adduser')
+@login_required
+def adduser(user_id, group_id):
+    user = User.query.filter_by(id=user_id).first()
+    group = Group.query.filter_by(id=group_id).first()
+    rel = db.session.query(users_groups_relations).filter_by(group_id=group.id, user_id=user.id).first()
+    if not rel:
+        flash(f'Пользователь добавлен {user_id} {group_id}')
+    return redirect(url_for('groups.editgroup', id=group.id))

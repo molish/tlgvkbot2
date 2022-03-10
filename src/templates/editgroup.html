@@ -20,8 +20,8 @@
 
     <div class="btn-group" role="group" aria-label="Basic outlined example" style="margin-top: 5px; margin-right: 10px">
         <a class="btn btn-outline-primary" href="{{url_for('groups.deletegroup', id=group.id)}}" role="button">Удалить группу</a>
-        <a class="btn btn-outline-primary" href="#" role="button">Сообщения</a>
-        <a class="btn btn-outline-primary" href="#" role="button">Отправить рассылку</a>
+        <a class="btn btn-outline-primary" href="{{ url_for('messages.groupmessages', id=group.id) }}" role="button">Сообщения</a>
+        <a class="btn btn-outline-primary" href="{{ url_for('messages.groupmessage', id=group.id) }}" role="button">Отправить рассылку</a>
         <div class="dropdown">
           <a class="btn btn-outline-primary btn-sm dropdown-toggle"
              href="#" role="button" id="dropdownMenuLink"
@@ -29,9 +29,9 @@
              aria-expanded="false">
             Добавить пользователя
           </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="overflow-y: auto; max-height: 250px">
                 {% for user in not_in_group%}
-                    <li><a class="dropdown-item" href="#">{{ user['name'] }} {{ user['phone_number'] }}</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('groups.adduser', user_id=user['id'], group_id=group.id) }}">{{ user['name'] }} {{ user['phone_number'] }}</a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -69,10 +69,10 @@
                   {% endif %}
               </td>
               <td>
-                    <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                    <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="{{ url_for('groups.removeuser', user_id=user['id'], group_id=group.id) }}">
                         Удалить из группы
                     </a>
-                    <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                    <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="{{ url_for('messages.usermessage', id=user['id']) }}">
                         Отправить сообщение
                     </a>
               </td>

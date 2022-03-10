@@ -19,8 +19,8 @@
           <div class="accordion-body">
                 <div class="btn-group" role="group" aria-label="Basic outlined example" style="margin-top: 5px; margin-right: 10px">
                     <a class="btn btn-outline-primary" href="{{ url_for('groups.editgroup', id=group['id']) }}" role="button">Редактировать группу</a>
-                    <a class="btn btn-outline-primary" href="#" role="button">Сообщения</a>
-                    <a class="btn btn-outline-primary" href="#" role="button">Отправить рассылку</a>
+                    <a class="btn btn-outline-primary" href="{{ url_for('messages.groupmessages', id=group['id']) }}" role="button">Сообщения</a>
+                    <a class="btn btn-outline-primary" href="{{ url_for('messages.groupmessage', id=group['id']) }}" role="button">Отправить рассылку</a>
                 </div>
                 <table class="table table-hover">
                       <thead>
@@ -55,7 +55,7 @@
                                       {% endif %}
                                   </td>
                                   <td>
-                                        <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="">
+                                        <a class="btn btn-info btn-sm" style="background-color:blueviolet; color:white" href="{{ url_for('messages.usermessage', id=user['id']) }}">
                                             Отправить сообщение
                                         </a>
                                   </td>

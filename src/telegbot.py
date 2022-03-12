@@ -12,15 +12,15 @@ def listen_tg_bot():
     tgbot.polling(none_stop=True, interval=1)
 
 
-async def send_message(text, chat_id, message_id):
+def send_message(text, chat_id, message_id):
     keyboard = telebot.types.InlineKeyboardMarkup()
     keyboard.add(telebot.types.InlineKeyboardButton(text="Получил", callback_data=f'msg{message_id}'))
-    await tgbot.send_message("Пожалуйста нажмите на кнопку получил, чтобы подтвердить что вы получили сообщение",
+    tgbot.send_message("Пожалуйста нажмите на кнопку получил, чтобы подтвердить что вы получили сообщение",
                              reply_markup=keyboard)
 
 
-@tgbot.callback_query_handler(regexp='^msg(\d{1,10})$')
-async def mark_msg(call: telebot.types.CallbackQuery):
+@tgbot.callback_query_handler(func=lambda call: True, regexp='^msg(\d{1,10})$')
+def mark_msg(call: telebot.types.CallbackQuery):
     with init_db().app_context():
         chat_id = call.message.chat.id
         message_id = re.match('(\d{1,10})').string
@@ -33,41 +33,42 @@ async def mark_msg(call: telebot.types.CallbackQuery):
 
 
 @tgbot.message_handler(commands=['reg'])
-async def reg_command(message):
+def reg_command(message):
     with init_db().app_context():
         user = User.query.filter_by(tlg_chat_id=message.from_user.id).first()
         if not user:
-            await tgbot.send_message(message.from_user.id, "Введите свой номер телефона в формате 8 9** *** ** ** :")
+            tgbot.send_message(message.from_user.id, "Введите свой номер телефона в формате 8 9** *** ** ** :")
         else:
-            await tgbot.send_message(user.tlg_chat_id,
+            tgbot.send_message(user.tlg_chat_id,
                                      f"Вы уже выполнили вход как пользователь: {user.name} с номером телефона: {user.phone_number} вы: {user.app_role}")
 
 
 @tgbot.message_handler(regexp='^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$')
-async def phone_number(message):
+def phone_number(message):
     with init_db().app_context():
         s = phone_num.match(message.text).string.replace(' ', '').replace('-', '')
         user = User.query.filter_by(phone_number=s).first()
         if user and not user.tlg_authorized:
             User.query.filter_by(phone_number=s).update({'tlg_authorized': True, 'lg_chat_id': message.chat.id})
             db.session.commit()
-            await message.reply(f'Вы успешно авторизованы как пользователь {user.name} {user.phone_number}')
+            message.reply(f'Вы успешно авторизованы как пользователь {user.name} {user.phone_number}')
         elif user and user.tlg_authorized and user.tlg_chat_id == message.chat.id:
-            await message.reply(f'Вы уже авторизованы как пользователь {user.name} {user.phone_number}')
+            message.reply(f'Вы уже авторизованы как пользователь {user.name} {user.phone_number}')
         elif user and user.tlg_authorized and user.tlg_chat_id != message.chat.id:
-            await message.reply('Пользователь с таким номером телефона уже авторизован в системе')
+            message.reply('Пользователь с таким номером телефона уже авторизован в системе')
         else:
-            await message.reply('Пользователь с таким номером телефона еще не добавлен администратором, обратитесь к администратору для решения этого вопроса')
+            message.reply(
+                'Пользователь с таким номером телефона еще не добавлен администратором, обратитесь к администратору для решения этого вопроса')
 
 
 @tgbot.message_handler(regexp='((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}')
-async def phone_number_wrong(message):
+def phone_number_wrong(message):
     s = phone_num.match(message.text)
-    await tgbot.send_message(message.from_user.id,
+    tgbot.send_message(message.from_user.id,
                              'неверно введен номер телефона, строка не должна содержать иных символов и слов кроме номера телефона')
 
 
 @tgbot.message_handler(content_types=['text'])
 async def get_text_messages(message):
-    await tgbot.send_message(message.from_user.id,
+    tgbot.send_message(message.from_user.id,
                              "Если вы еще не выполнили вход: отправьте команду /reg\n, иначе просто периодически проверяйте входящие сообщения")

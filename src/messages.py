@@ -28,7 +28,7 @@ def groupmessages(id):
             db_receiver = message.user.name
             msg_content[f'message{message.id}'] = db_msg
             msg_content[f'sender{message.sender_id}'] = db_sender
-            msg_content[f'receiver{message.user_id}'] = db_sender
+            msg_content[f'receiver{message.user_id}'] = db_receiver
     return render_template('groupmessages.html', group=group, messages=messages, messages_content=msg_content,
                            noMessages=no_messages)
 
@@ -44,5 +44,12 @@ def groupmessage(id):
 @messages.route('/<int:id>/usermessage')
 @login_required
 def usermessage(id):
+    user = User.query.filter_by(id=id).first()
+    return render_template('usermessage.html', user=user)
+
+
+@messages.route('/<int:id>/usermessage', methods=['POST'])
+@login_required
+def usermessage_post(id):
     user = User.query.filter_by(id=id).first()
     return render_template('usermessage.html', user=user)

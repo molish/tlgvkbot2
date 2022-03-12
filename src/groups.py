@@ -1,7 +1,5 @@
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import login_required, current_user
-from .telegbot import send_message
-from werkzeug.security import generate_password_hash
 
 from .constants import *
 from .models import *

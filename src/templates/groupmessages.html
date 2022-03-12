@@ -21,6 +21,10 @@
                         Отправитель: <a href="{{ url_for('users.edituser', id=message['sender_id']) }}">{{ messages_content[senderid] }}</a>
                     </div>
                     <div class="col-3">
+                        {%  set receiverid = 'receiver' ~ message['user_id'] %}
+                        Получатель: <a href="{{ url_for('users.edituser', id=message['user_id']) }}">{{ messages_content[receiverid] }}</a>
+                    </div>
+                    <div class="col-3">
                       Статус получения:
                     </div>
                     <div class="col-1">

@@ -1,5 +1,6 @@
 import sys
 import threading
+import traceback
 
 from flask import Flask, current_app
 from flask_login import LoginManager
@@ -32,7 +33,6 @@ def create_app():
         # since the user_id is just the primary key of our user table, use it in the query for the user
         return User.query.get(int(user_id))
 
-
     # blueprint for auth routes in our app
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
@@ -55,10 +55,22 @@ def create_app():
     try:
         x = threading.Thread(target=listen_tg_bot, daemon=True)
         x.start()
-    except BaseException:
-        sys.exit()
+    except BaseException as e:
+        print('exception:',  traceback.format_exc())
+
+    print('tg daemon started')
+
+    from .vkontaktebot import start_vkbot
+
+    try:
+        y = threading.Thread(target=start_vkbot, daemon=True)
+        y.start()
+        print('vk daemon started')
+    except BaseException as e:
+        print('exception:',  traceback.format_exc())
 
     return app
+
 
 def init_db():
     app = Flask(__name__)

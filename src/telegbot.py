@@ -12,10 +12,10 @@ def listen_tg_bot():
     tgbot.polling(none_stop=True, interval=1)
 
 
-def send_message(text, chat_id, message_id):
+def send_tgmessage(text, chat_id, message_id):
     keyboard = telebot.types.InlineKeyboardMarkup()
     keyboard.add(telebot.types.InlineKeyboardButton(text="Получил", callback_data=f'msg{message_id}'))
-    tgbot.send_message("Пожалуйста нажмите на кнопку получил, чтобы подтвердить что вы получили сообщение",
+    tgbot.send_message(f"{text}\n\n\nПожалуйста нажмите на кнопку получил, чтобы подтвердить, что вы получили сообщение",
                        reply_markup=keyboard)
 
 
@@ -71,6 +71,6 @@ def phone_number_wrong(message):
 
 
 @tgbot.message_handler(content_types=['text'])
-async def get_text_messages(message):
+def get_text_messages(message):
     tgbot.send_message(message.from_user.id,
                        "Если вы еще не выполнили вход: отправьте команду /reg\n, иначе просто периодически проверяйте входящие сообщения")

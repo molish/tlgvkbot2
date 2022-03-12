@@ -1,7 +1,5 @@
 from datetime import datetime
-
 from flask_login import UserMixin
-
 from . import db
 
 users_groups_relations = db.Table('user_groups_relations',
@@ -25,6 +23,8 @@ class User(UserMixin, db.Model):
     status = db.Column(db.String(30))  # статус пользователя(ожидает подтверждения\в архиве\подтвержден)
     app_role = db.Column(db.String(20))  # роль в приложении(админ, модератор, пользователь)
     organisation_role = db.Column(db.String(100))  # должность в организации
+    tlg_chat_id = db.Column(db.Integer, default=-1)
+    vk_chat_id = db.Column(db.Integer, default=-1)
 
 
 class Group(db.Model):

@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import login_required, current_user
+from .telegbot import *
 from werkzeug.security import generate_password_hash
 
 from .constants import *
@@ -98,4 +99,5 @@ def adduser(user_id, group_id):
     rel = db.session.query(users_groups_relations).filter_by(group_id=group.id, user_id=user.id).first()
     if not rel:
         flash(f'Пользователь добавлен {user_id} {group_id}')
+        send_message(f'Пользователь добавлен {user.name}', 381333429)
     return redirect(url_for('groups.editgroup', id=group.id))

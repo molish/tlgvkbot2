@@ -18,12 +18,6 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    try:
-        x = threading.Thread(target=listen_tg_bot, daemon=True)
-        x.start()
-    except BaseException:
-        sys.exit()
-
     db.init_app(app)
 
     app.jinja_env.add_extension('jinja2.ext.loopcontrols')
@@ -38,6 +32,12 @@ def create_app():
     def load_user(user_id):
         # since the user_id is just the primary key of our user table, use it in the query for the user
         return User.query.get(int(user_id))
+
+    try:
+        x = threading.Thread(target=listen_tg_bot, daemon=True)
+        x.start()
+    except BaseException:
+        sys.exit()
 
 
     # blueprint for auth routes in our app

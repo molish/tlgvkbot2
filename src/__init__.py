@@ -1,10 +1,9 @@
 import sys
 import threading
 
-from flask import Flask
+from flask import Flask, current_app
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
-from .telegbot import listen_tg_bot
 
 # init SQLAlchemy so we can use it later in our models
 
@@ -33,12 +32,6 @@ def create_app():
         # since the user_id is just the primary key of our user table, use it in the query for the user
         return User.query.get(int(user_id))
 
-    try:
-        x = threading.Thread(target=listen_tg_bot, daemon=True)
-        x.start()
-    except BaseException:
-        sys.exit()
-
 
     # blueprint for auth routes in our app
     from .auth import auth as auth_blueprint
@@ -57,4 +50,15 @@ def create_app():
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    from .telegbot import listen_tg_bot
+
+    try:
+        x = threading.Thread(target=listen_tg_bot, daemon=True)
+        x.start()
+    except BaseException:
+        sys.exit()
+
     return app
+
+
+main = create_app().app_context()

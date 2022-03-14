@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table class="table table-hover">
+      <thead>
+        <tr>
+            <th scope="col">Имя Фамилия</th>
+            <th scope="col">Номер</th>
+            <th scope="col">Должность</th>
+            <th scope="col"></th>
+            <th scope="col">Статус</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+        <tbody>
+            {%for user in users%}
+            <tr>
+              <td scope="row">
+                  <a class="text-decoration-none" style="color: black"
+                     href="{{ url_for('users.edituser', id=user['id']) }}">
+                  {{ user['name'] }}</a></td>
+              <td>{{ user['phone_number'] }}</td>
+              <td>{{ user['organisation_role'] }}</td>
+              <td>
+                  {% if user['tlg_authorized'] %}
+                      <img src="../static/images/tg.png" alt="TG" class="img-rounded" style="height:30px; width:30px"/>
+                  {% else %}
+                      <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                  {% endif %}
+                  {% if user['vk_authorized'] %}
+                      <img src="../static/images/vk.png" alt="VK" class="img-rounded" style="height:30px; width:30px"/>
+                  {% else %}
+                      <img src="../static/images/none.png" alt="" class="img-rounded" style="height:30px; width:30px"/>
+                  {% endif %}
+              </td>
+              <td>
+                    {% if user['status'] == 'подтвержден' %}
+                        <label style="color: green">Подтвержден </label>
+                    {% endif %}
+                    {% if user['status'] == 'ожидает подтверждения' %}
+                        <label style="color: darkgreen">Ожидает подтверждения </label>
+                    {% endif %}
+                    {% if user['status'] == 'ожидает отправления в архив' %}
+                        <label style="color: orange">Ожидает отправления в архив </label>
+                    {% endif %}
+                    {% if user['status'] == 'в архиве' %}
+                        <label style="color: red">В архиве </label>
+                    {% endif %}
+                    {% if user['status'] == 'Ожидает восстановления' %}
+                        <label style="color: darkgoldenrod">Ожидает восстановления </label>
+                    {% endif %}
+              </td>
+            </tr>
+              {%endfor%}
+        </tbody>
+    </table>
+{% endblock %}

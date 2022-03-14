@@ -35,6 +35,13 @@
                         </li>
                         {% if current_user.is_authenticated %}
                         <li class="nav-item">
+                            <a href="{{ url_for('main.admusers') }}" class="nav-link text-light">
+                                Панель пользователей
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item">
                             <a href="{{ url_for('main.workallusers') }}" class="nav-link text-light">
                                 Работа
                             </a>

@@ -32,3 +32,9 @@ def workallgroups():
     relations = db.session.query(users_groups_relations).all()
     groups = Group.query.order_by(db.desc(Group.id)).all()
     return render_template('workallgroups.html', users=users, groups=groups, relations=relations)
+
+@main.route('/admusers')
+@login_required
+def admusers():
+    users = User.query.filter(User.status.in_([ARCHIEVED, WAITING_RESTORE, WAITING_CONFIRMENT, WAITING_ARCHIEVED])).order_by(User.name, User.status).all()
+    return render_template('admusers.html', users=users)

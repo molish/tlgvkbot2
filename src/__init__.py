@@ -57,6 +57,7 @@ def create_app():
         x.start()
     except BaseException as e:
         print('exception:',  traceback.format_exc())
+        x.stop()
 
     print('tg daemon started')
 
@@ -68,6 +69,7 @@ def create_app():
         print('vk daemon started')
     except BaseException as e:
         print('exception:',  traceback.format_exc())
+        y.stop()
 
     return app
 

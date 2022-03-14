@@ -7,13 +7,13 @@
     {% if noMessages %}
     <h1 style="margin-top: 20px">В группе нет сообщений</h1>
     {% else %}
-        {% for message in user_messages %}
+        {% for message in messages %}
           <div class="accordion-item" style="margin-top: 20px">
             <h2 class="accordion-header" id="panelsStayOpen-heading{{ message['id'] }}">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{ message['id'] }}" aria-expanded="true" aria-controls="panelsStayOpen-collapse{{ message['id'] }}">
                 <div class="container">
                   <div class="row">
-                    <div class="col-4">
+                    <div class="col-1">
                       Дата: {{ message['date'] }}
                     </div>
                     <div class="col-3">

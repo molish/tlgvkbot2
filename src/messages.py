@@ -1,7 +1,14 @@
+import threading
+import time
+import traceback
+
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import login_required, current_user
-from werkzeug.security import generate_password_hash
+from sqlalchemy import or_
 
+from . import init_db
+from .telegbot import send_tgmessage
+from .vkontaktebot import send_vkmessage
 from .constants import *
 from .models import *
 
@@ -52,4 +59,79 @@ def usermessage(id):
 @login_required
 def usermessage_post(id):
     user = User.query.filter_by(id=id).first()
-    return render_template('usermessage.html', user=user)
+    if user.tlg_authorized or user.vk_authorized:
+        message_text = request.form.get('message_content')
+        content = Content.query.filter_by(message=message_text).first()
+        if not content:
+            content = Content(message=message_text)
+            db.session.add(content)
+            db.session.commit()
+        message = Message(is_group=False,
+                          user_id=user.id,
+                          sender_id=current_user.id,
+                          content_id=content.id,
+                          tlg_received=False,
+                          vk_received=False,
+                          date=datetime.strftime(datetime.utcnow(), '%Y-%m-%d %H:%M:%S'))
+        db.session.add(message)
+        db.session.commit()
+        if user.tlg_authorized:
+            send_tgmessage(f'{message.content.message}\n\nОтправитель:{message.sender.name}\n',
+                           chat_id=user.tlg_chat_id, message_id=message.id)
+            flash('Сообщение отправлено в телеграм')
+        if user.vk_authorized:
+            send_vkmessage(f'{message.content.message}\n\nОтправитель:{message.sender.name}\n', chat_id=user.vk_chat_id)
+            flash('Сообщение отправлено в вк')
+    else:
+        flash('Нельзя отправить сообщение пользователю который не подтвердил один из мессенджеров')
+    return redirect(url_for('messages.usermessage', id=id))
+
+
+@messages.route('/<int:id>/groupmessage', methods=['POST'])
+@login_required
+def groupmessage_post(id):
+    message_text = request.form.get('message_content')
+    try:
+       sender = threading.Thread(target=send_group_mailing, args=(id, message_text, current_user.id)).start()
+    except BaseException as e:
+        print('SENDER EXCEPTION:', traceback.format_exc())
+    return redirect(url_for('messages.groupmessage', id=id))
+
+
+def send_group_mailing(id, message_text, current_user_id):
+    with init_db().app_context():
+        group = Group.query.filter_by(id=id).first()
+        relations = db.session.query(users_groups_relations).filter_by(group_id=group.id).all()
+        if len(relations) > 0:
+            group_users = []
+            for row in relations:
+                group_users.append(row.user_id)
+            users = User.query.filter(User.id.in_(group_users)).filter(or_(User.tlg_authorized == True, User.vk_authorized==True)).order_by(User.name).all()
+            counter = 1
+            content = Content.query.filter_by(message=message_text).first()
+            if not content:
+                content = Content(message=message_text)
+                db.session.add(content)
+                db.session.commit()
+            for user in users:
+                if counter > 28:
+                    time.sleep(2)
+                    counter = 1
+                message = Message(is_group=True,
+                                  user_id=user.id,
+                                  sender_id=current_user_id,
+                                  content_id=content.id,
+                                  group_id=group.id,
+                                  tlg_received=False,
+                                  vk_received=False,
+                                  date=datetime.strftime(datetime.utcnow(), '%Y-%m-%d %H:%M:%S'))
+                db.session.add(message)
+                db.session.commit()
+                if user.tlg_authorized:
+                    send_tgmessage(
+                        f'{message.content.message}\n\nОтправитель:\n    группа: {group.name}\n   {message.sender.name}\n',
+                        chat_id=user.tlg_chat_id, message_id=message.id)
+                if user.vk_authorized:
+                    send_vkmessage(
+                        f'{message.content.message}\n\nОтправитель:\n  группа: {group.name}\n  {message.sender.name}\n',
+                        chat_id=user.vk_chat_id)

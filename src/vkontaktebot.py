@@ -6,6 +6,7 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 
 from src import init_db, db
+from src.constants import CONFIRMED
 from src.models import User
 
 vk_session = vk_api.VkApi(token='c9f2b2ddad9d6fcedbe9b4f217c030ef233f5b8cd7ff0cf2bec0420a7445bc065c4581d4fd71e9e541a84')
@@ -28,7 +29,7 @@ def start_vkbot():
                         user = User.query.filter_by(phone_number=s).first()
                         if user and not user.vk_authorized:
                             User.query.filter_by(phone_number=s).update(
-                                {'vk_authorized': True, 'vk_chat_id': event.user_id})
+                                {'status': CONFIRMED, 'vk_authorized': True, 'vk_chat_id': event.user_id})
                             db.session.commit()
                             send_vkmessage(f'Вы успешно авторизованы как пользователь {user.name} {user.phone_number}',
                                            event.user_id)

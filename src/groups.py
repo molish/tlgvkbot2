@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import login_required, current_user
+from sqlalchemy import insert, delete, and_
 
 from .constants import *
 from .models import *
@@ -85,6 +86,9 @@ def removeuser(user_id, group_id):
     group = Group.query.filter_by(id=group_id).first()
     rel = db.session.query(users_groups_relations).filter_by(group_id=group.id, user_id=user.id).first()
     if rel:
+        old_rel = delete(users_groups_relations).where(users_groups_relations.c.group_id==group.id).where(users_groups_relations.c.user_id==user.id)
+        db.session.execute(old_rel)
+        db.session.commit()
         flash(f'Пользователь удален {user_id} {group_id}')
     return redirect(url_for('groups.editgroup', id=group.id))
 
@@ -96,5 +100,8 @@ def adduser(user_id, group_id):
     group = Group.query.filter_by(id=group_id).first()
     rel = db.session.query(users_groups_relations).filter_by(group_id=group.id, user_id=user.id).first()
     if not rel:
+        new_rel = users_groups_relations.insert().values(group_id=group.id, user_id=user.id)
+        db.session.execute(new_rel)
+        db.session.commit()
         flash(f'Пользователь добавлен {user_id} {group_id}')
     return redirect(url_for('groups.editgroup', id=group.id))

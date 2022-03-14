@@ -85,7 +85,7 @@ def edituser_post(id):
     db_name = request.form.get('user_name')
     db_phone_number = request.form.get('phone_number')
     db_org_role = request.form.get('org_role')
-    db_password = ''
+    new_user.password = user.password
     if db_name:
         new_user.name = db_name
     else:
@@ -109,7 +109,7 @@ def edituser_post(id):
         if app_role == USER:
             new_user.app_role = USER
         password = request.form.get('pass')
-        if password:
+        if password and password != '':
             new_user.password = generate_password_hash(password, method='sha256')
     else:
         new_user.app_role = user.app_role

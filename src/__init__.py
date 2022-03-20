@@ -9,7 +9,8 @@ from flask_sqlalchemy import SQLAlchemy
 # init SQLAlchemy so we can use it later in our models
 
 db = SQLAlchemy()
-
+tg_thread = threading.Thread()
+vk_thread = threading.Thread()
 
 def create_app():
     app = Flask(__name__)
@@ -51,25 +52,29 @@ def create_app():
     app.register_blueprint(main_blueprint)
 
     from .telegbot import listen_tg_bot
+    from . import tg_thread
 
     try:
-        x = threading.Thread(target=listen_tg_bot, daemon=True)
-        x.start()
+        if not tg_thread.is_alive():
+            tg_thread = threading.Thread(target=listen_tg_bot, daemon=True)
+            tg_thread.start()
     except BaseException as e:
         print('exception:',  traceback.format_exc())
-        x.stop()
+        tg_thread.stop()
 
     print('tg daemon started')
 
     from .vkontaktebot import start_vkbot
+    from . import vk_thread
 
     try:
-        y = threading.Thread(target=start_vkbot, daemon=True)
-        y.start()
-        print('vk daemon started')
+        if not vk_thread.is_alive():
+            vk_thread = threading.Thread(target=start_vkbot, daemon=True)
+            vk_thread.start()
+            print('vk daemon started')
     except BaseException as e:
         print('exception:',  traceback.format_exc())
-        y.stop()
+        vk_thread.stop()
 
     return app
 

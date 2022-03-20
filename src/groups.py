@@ -89,7 +89,7 @@ def removeuser(user_id, group_id):
         old_rel = delete(users_groups_relations).where(users_groups_relations.c.group_id==group.id).where(users_groups_relations.c.user_id==user.id)
         db.session.execute(old_rel)
         db.session.commit()
-        flash(f'Пользователь удален {user_id} {group_id}')
+        flash(f'Пользователь {user.name} {user.phone_number} удален')
     return redirect(url_for('groups.editgroup', id=group.id))
 
 
@@ -103,5 +103,5 @@ def adduser(user_id, group_id):
         new_rel = users_groups_relations.insert().values(group_id=group.id, user_id=user.id)
         db.session.execute(new_rel)
         db.session.commit()
-        flash(f'Пользователь добавлен {user_id} {group_id}')
+        flash(f'Пользователь {user.name} {user.phone_number} добавлен')
     return redirect(url_for('groups.editgroup', id=group.id))

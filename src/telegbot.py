@@ -5,7 +5,7 @@ from .constants import CONFIRMED
 from .models import *
 from . import init_db, db
 
-tgbot = telebot.TeleBot('')
+tgbot = telebot.TeleBot('5162461863:AAGpVulVti1UpHHx-kPBB4-CNZT9mpvfk6Q')
 phone_num = re.compile('^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$')
 msg_id = re.compile('^msg(\d{1,10})$')
 

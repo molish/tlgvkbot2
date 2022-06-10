@@ -1,9 +1,9 @@
 import telebot
 import re
-from .constants import CONFIRMED
+from constants import CONFIRMED
 
-from .models import *
-from . import init_db, db
+from models import *
+from app import init_db, db
 
 tgbot = telebot.TeleBot('5162461863:AAGpVulVti1UpHHx-kPBB4-CNZT9mpvfk6Q')
 phone_num = re.compile('^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$')

@@ -5,9 +5,9 @@ import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 
-from src import init_db, db
-from src.constants import CONFIRMED
-from src.models import User
+from app import init_db, db
+from constants import CONFIRMED
+from models import User
 
 vk_session = vk_api.VkApi(token='c9f2b2ddad9d6fcedbe9b4f217c030ef233f5b8cd7ff0cf2bec0420a7445bc065c4581d4fd71e9e541a84')
 phone_num = re.compile('^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$')

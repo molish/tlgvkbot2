@@ -6,11 +6,11 @@ from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import login_required, current_user
 from sqlalchemy import or_
 
-from . import init_db
-from .telegbot import send_tgmessage
-from .vkontaktebot import send_vkmessage
-from .constants import *
-from .models import *
+from app import init_db
+from telegbot import send_tgmessage
+from vkontaktebot import send_vkmessage
+from constants import *
+from models import *
 
 messages = Blueprint('messages', __name__)
 

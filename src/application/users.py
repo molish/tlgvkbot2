@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 
-from .constants import *
-from .models import *
+from constants import *
+from models import *
 
 users = Blueprint('users', __name__)
 

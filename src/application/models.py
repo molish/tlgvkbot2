@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_login import UserMixin
-from . import db
+from app import db
 
 users_groups_relations = db.Table('user_groups_relations',
                                   db.Column('group_id', db.Integer, db.ForeignKey('group.id')),
